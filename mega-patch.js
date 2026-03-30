@@ -30,27 +30,7 @@
   const style = document.createElement('style');
   style.id = 'ok-merged-css';
   style.textContent = `
-/* Subcategory Circle Styles */
-.ok-subcat-wrapper {
-  display: flex; overflow-x: auto; gap: 15px; padding: 15px;
-  scrollbar-width: none; -webkit-overflow-scrolling: touch;
-  background: white;
-}
-.ok-subcat-item {
-  flex: 0 0 75px; text-align: center; cursor: pointer;
-}
-.ok-subcat-circle {
-  width: 65px; height: 65px; border-radius: 50%;
-  border: 2px solid #e11d48; padding: 2px; margin: 0 auto 6px;
-  overflow: hidden; background: #fff;
-}
-.ok-subcat-circle img {
-  width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
-}
-.ok-subcat-label {
-  font-size: 10px; font-weight: 800; color: #1c1c1e;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
+
 
     /* ── FIX 1: Profile page z-index ABOVE header (z-50) ── */
     .profile-page {
@@ -1019,26 +999,31 @@ window._showPWAPopup = function() {
 
 
 /* ═══════════════════════════════════════════════════════════════
-   SECTION 7 — INFLUENCER SUBMISSIONS (Fixed)
+   FIXED: INFLUENCER RECORDS + HYBRID DB/LOCALSTORAGE
    ═══════════════════════════════════════════════════════════════ */
 window.loadInfluencerRequests = async function() {
-  // Fix: Directly get mobile from storage if currentUser is not global yet
+  const container = document.getElementById('inf-requests-list');
+  if (!container) return;
+
+  // 1. Get Mobile from Storage (Safer than Global variable)
   const storedUser = JSON.parse(localStorage.getItem('outfitkart_session') || localStorage.getItem('outfitkart_user') || '{}');
   const userMobile = window.currentUser?.mobile || storedUser.mobile;
 
   if (!userMobile) {
-    console.warn("Influencer load failed: No user mobile found");
+    container.innerHTML = '<div class="text-center py-6 text-gray-400 text-xs">Login karo submissions dekhne ke liye.</div>';
     return;
   }
 
-  const container = document.getElementById('inf-requests-list');
-  if (!container) return;
-  
   container.innerHTML = '<div class="text-center py-6"><i class="fas fa-spinner fa-spin text-2xl text-purple-500"></i></div>';
-  
+
   try {
-    const client = window.dbClient || window.supabase;
-    if (!client) throw new Error('Database connection missing');
+    // 2. Database Connection Check (Supabase)
+    const client = window.supabase || window.dbClient;
+    
+    // ERROR FIX: Agar client initialize nahi hua, toh try reaching global
+    if (!client || typeof client.from !== 'function') {
+      throw new Error('Supabase client not ready');
+    }
 
     const { data, error } = await client
       .from('influencer_requests')
@@ -1047,6 +1032,33 @@ window.loadInfluencerRequests = async function() {
       .order('id', { ascending: false });
 
     if (error) throw error;
+
+    // 3. Sync to LocalStorage (Backup for offline)
+    localStorage.setItem(`ok_inf_cache_${userMobile}`, JSON.stringify(data));
+    
+    _renderInfluencerUI(data, container);
+
+  } catch (err) {
+    console.warn("DB Error, falling back to LocalStorage:", err.message);
+    
+    // 4. FALLBACK: Database fail hua toh LocalStorage se uthao
+    const cachedData = JSON.parse(localStorage.getItem(`ok_inf_cache_${userMobile}`) || '[]');
+    if (cachedData.length > 0) {
+      _renderInfluencerUI(cachedData, container);
+    } else {
+      container.innerHTML = `<div class="text-center py-6 text-red-400 text-xs">
+        <i class="fas fa-exclamation-triangle block mb-1"></i> DB connection failed. Try refreshing.
+      </div>`;
+    }
+  }
+};
+
+// Helper function to render UI
+function _renderInfluencerUI(all, container) {
+  if (!all || !all.length) {
+    container.innerHTML = `<div class="text-center py-10 text-gray-400"><p class="text-sm">Koi submission nahi mila.</p></div>`;
+    return;
+  }
     const all = data || [];
     const approved = all.filter(r => r.status === 'Approved');
     const totalEarned = approved.reduce((s, r) => s + (r.earnings || 0), 0);
@@ -1305,9 +1317,9 @@ function _renderShopByCategorySection() {
   const catData = [
     { name:'Men', img:'https://images.unsplash.com/photo-1617137968427-85924c800a22?w=400&h=533&fit=crop&q=80', action:"openCategoryPage('Men')" },
     { name:'Women', img:'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&h=533&fit=crop&q=80', action:"openCategoryPage('Women')" },
-    { name:'Footwear', img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=533&fit=crop&q=80', action:"openSubcatProducts('Men','Sneakers')" },
-    { name:'Accessories', img:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=533&fit=crop&q=80', action:"openCategoryPage('Accessories')" },
-  ];
+    { name:'perfumes', img:'https://i.ibb.co/dJ0Dzwd6/ms-nrfe7-512-205656212.jpg?w=400&h=533&fit=crop&q=80', action:"openCategoryPage('Perfumes')" },
+    { name:'Footwear', img:'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=533&fit=crop&q=80', action:"openCategoryPage('Footwear')" },
+     { name:'Accessories', img:'https://images.unsplash.com/photo-1549439602-43ebca2327af?w=400&h=533&fit=crop&q=80', action:"openCategoryPage('Accessories')" },
   const section = document.createElement('div');
   section.id = 'ok-shopco-cats';
   section.innerHTML = `<h2>Shop By Category</h2><div class="ok-cat-grid">${catData.map(c=>`<div class="ok-cat-card" onclick="${c.action}"><img src="${c.img}" alt="${c.name}" loading="lazy" onerror="this.src='https://placehold.co/300x400/f3f4f6/9ca3af?text=${c.name}'"><div class="ok-cat-card-label">${c.name}</div></div>`).join('')}</div><button class="ok-viewall-btn" onclick="navigate('shop')">View All Categories</button>`;
@@ -1620,30 +1632,7 @@ function _injectAdminAdsTab() {
     };
   }
 }
-function _renderSubcatCircles() {
-  if (document.getElementById('ok-subcat-strip')) return;
-  const homeView = document.getElementById('view-home');
-  if (!homeView) return;
 
-  const subcats = [
-    { name: 'Shirts', img: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=150', cat: 'Men', sub: 'Shirts' },
-    { name: 'Kurti', img: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=150', cat: 'Women', sub: 'Kurtis' },
-    { name: 'Jeans', img: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=150', cat: 'Men', sub: 'Jeans' },
-    { name: 'Perfume', img: 'https://images.unsplash.com/photo-1541643600914-78b084683601?w=150', cat: 'Accessories', sub: 'Perfumes' },
-    { name: 'Sneakers', img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=150', cat: 'Men', sub: 'Sneakers' }
-  ];
-
-  const strip = document.createElement('div');
-  strip.id = 'ok-subcat-strip';
-  strip.className = 'ok-subcat-wrapper';
-  strip.innerHTML = subcats.map(s => `
-    <div class="ok-subcat-item" onclick="openSubcatProducts('${s.cat}', '${s.sub}')">
-      <div class="ok-subcat-circle">
-        <img src="${s.img}" alt="${s.name}">
-      </div>
-      <div class="ok-subcat-label">${s.name}</div>
-    </div>
-  `).join('');
 
   // Isse Promo Banner ke theek niche insert karein
   const promo = document.getElementById('ok-promo-banner-strip');
