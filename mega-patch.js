@@ -30,6 +30,27 @@
   const style = document.createElement('style');
   style.id = 'ok-merged-css';
   style.textContent = `
+/* Subcategory Circle Styles */
+.ok-subcat-wrapper {
+  display: flex; overflow-x: auto; gap: 15px; padding: 15px;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  background: white;
+}
+.ok-subcat-item {
+  flex: 0 0 75px; text-align: center; cursor: pointer;
+}
+.ok-subcat-circle {
+  width: 65px; height: 65px; border-radius: 50%;
+  border: 2px solid #e11d48; padding: 2px; margin: 0 auto 6px;
+  overflow: hidden; background: #fff;
+}
+.ok-subcat-circle img {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+}
+.ok-subcat-label {
+  font-size: 10px; font-weight: 800; color: #1c1c1e;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 
     /* ── FIX 1: Profile page z-index ABOVE header (z-50) ── */
     .profile-page {
@@ -1599,6 +1620,35 @@ function _injectAdminAdsTab() {
     };
   }
 }
+function _renderSubcatCircles() {
+  if (document.getElementById('ok-subcat-strip')) return;
+  const homeView = document.getElementById('view-home');
+  if (!homeView) return;
+
+  const subcats = [
+    { name: 'Shirts', img: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=150', cat: 'Men', sub: 'Shirts' },
+    { name: 'Kurti', img: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=150', cat: 'Women', sub: 'Kurtis' },
+    { name: 'Jeans', img: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=150', cat: 'Men', sub: 'Jeans' },
+    { name: 'Perfume', img: 'https://images.unsplash.com/photo-1541643600914-78b084683601?w=150', cat: 'Accessories', sub: 'Perfumes' },
+    { name: 'Sneakers', img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=150', cat: 'Men', sub: 'Sneakers' }
+  ];
+
+  const strip = document.createElement('div');
+  strip.id = 'ok-subcat-strip';
+  strip.className = 'ok-subcat-wrapper';
+  strip.innerHTML = subcats.map(s => `
+    <div class="ok-subcat-item" onclick="openSubcatProducts('${s.cat}', '${s.sub}')">
+      <div class="ok-subcat-circle">
+        <img src="${s.img}" alt="${s.name}">
+      </div>
+      <div class="ok-subcat-label">${s.name}</div>
+    </div>
+  `).join('');
+
+  // Isse Promo Banner ke theek niche insert karein
+  const promo = document.getElementById('ok-promo-banner-strip');
+  if (promo) promo.insertAdjacentElement('afterend', strip);
+}
 
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1638,6 +1688,20 @@ function _patchNavigateForAll() {
       setTimeout(() => window.loadAdsForHome(), 1000);
       setTimeout(_renderFooter, 500);
     }
+     // Master Init ke andar ye add karein:
+setTimeout(() => {
+    _renderHomePromoBanner();
+    _renderSubcatCircles(); // Naya function call
+    _renderTrustStrip();
+    _renderShopByCategorySection();
+}, 500);
+
+// Influencer page check fix
+if (el.id === 'profile-page-influencer' && !el.classList.contains('hidden')) {
+    console.log("Loading influencer data...");
+    window.loadInfluencerRequests(); // Call manually on open
+}
+
     if (view === 'profile') {
       setTimeout(() => { const u = _getStoredUser(); if (u) _showProfileDashboard(u); }, 200);
       setTimeout(() => _injectLevelBadge(parseInt(document.getElementById('stat-orders-count')?.textContent)||0), 400);
@@ -1660,6 +1724,7 @@ function _initMergedPatch() {
   // 1. Profile z-index fix
   document.querySelectorAll('.profile-page').forEach(p => { p.style.zIndex = '200'; });
 
+  
   // 2. Search overlay
   _initSearchOverlay();
   _injectMobileSearchTrigger();
