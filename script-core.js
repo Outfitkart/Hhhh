@@ -7,7 +7,8 @@ const IMGBB_KEY         = '3949e4873d8510691ee63026d22eeb75';
 const SUPPORT_WA        = '918982296773';
 const SUPPORT_EMAIL     = 'outfitkartpremiumfashion@gmail.com';
 const SAFE_DELIVERY_URL = 'https://ltl.sh/y_nZrAV3';
-const INSTAGRAM_URL     = 'https://www.instagram.com/outfitkart_ecommers?igsh=MWUwNTNzczI4YjZsdw==';
+const INSTAGRAM_URL     = 'https://www.instagram.com/outfitkart_official?igsh=MTdlaG1jem56YWRpeQ==';
+const YOUTUBE_URL       = 'https://youtube.com/@outfitkart-official?si=SJOr76KDH_H99JDt';
 const TELEGRAM_CHANNEL  = 'https://t.me/outfitkart';
 const WHATSAPP_CHANNEL  = 'https://whatsapp.com/channel/0029VbCiSs06GcGJpToxKd3z';
 const LOGO_URL          = 'https://i.ibb.co/8DxtmN09/IMG-20260323-141417.png';
@@ -22,6 +23,7 @@ function isAuthorizedAdmin(user){
 }
 
 const dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+window.dbClient = dbClient;
 dbClient.from('products').select('count').limit(1)
     .then(({error})=>updateNetworkStatus(error?'error':'connected', error?.message||''))
     .catch(()=>updateNetworkStatus('offline'));
@@ -81,26 +83,96 @@ const CATEGORIES=[
          {label:'✨ Unisex',items:["Unisex Perfume","Luxury Perfume","Budget Perfume"]},
      ],
      sizesType:'ml',mlSizes:['10ml','20ml','30ml','50ml','75ml','100ml','150ml','200ml','250ml']},
+    {id:'combos',name:'Combos',
+     photo:'https://images.unsplash.com/photo-1445205170230-053b83016050?w=120&h=120&fit=crop&q=80',
+     subs:[
+         // Men Combos
+         'Casual Combo','Party Wear Combo','Gym Combo','Streetwear Combo','Office Combo',
+         // Women Combos
+         'Casual Outfit Combo','Party Combo','Ethnic Combo','Western Combo','College Wear Combo',
+         // Unisex Combos
+         'Couple Combo','Best Friend Combo','Matching Outfit Combo'
+     ],
+     groups:[
+         {label:'👕 Men Combos',items:['Casual Combo','Party Wear Combo','Gym Combo','Streetwear Combo','Office Combo']},
+         {label:'👗 Women Combos',items:['Casual Outfit Combo','Party Combo','Ethnic Combo','Western Combo','College Wear Combo']},
+         {label:'👫 Unisex Combos',items:['Couple Combo','Best Friend Combo','Matching Outfit Combo']},
+     ],
+     isComboCategory:true},
     {id:'accessories',name:'Accessories',
      photo:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=120&h=120&fit=crop&q=80',
-     subs:['Sunglasses','Watches','Wallets','Bags','Belts','Caps','Chains','Bracelets','Socks','Handbags','Clutches','Earrings','Necklace Sets','Bangles','Hair Accessories','Scrunchies','Unisex Sunglasses','Earbuds','Power Banks','Phone Cases','Backpacks'],
+     subs:['Sunglasses','Watches','Wallets','Belts','Caps','Chains','Bracelets','Socks','Handbags','Clutches','Earrings','Necklace Sets','Bangles','Hair Accessories','Scrunchies','Unisex Sunglasses'],
      groups:[
-         {label:"👨 Men's Accessories",items:['Sunglasses','Watches','Wallets','Bags','Belts','Caps','Chains','Bracelets','Socks']},
-         {label:"👩 Women's Accessories",items:['Handbags','Clutches','Earrings','Necklace Sets','Bangles','Bracelets','Hair Accessories','Scrunchies','Socks','Belts']},
-         {label:'✨ Unisex & Tech',items:['Unisex Sunglasses','Earbuds','Power Banks','Phone Cases','Backpacks']},
+         {label:"👨 Men's Accessories",items:['Sunglasses','Watches','Wallets','Belts','Caps','Chains','Bracelets','Socks']},
+         {label:"👩 Women's Accessories",items:['Watches','Handbags','Clutches','Earrings','Necklace Sets','Bangles','Bracelets','Hair Accessories','Scrunchies','Socks','Belts']},
+         {label:'✨ Unisex',items:['Unisex Sunglasses']},
+     ]},
+    {id:'bags',name:'Bags',
+     photo:'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=120&h=120&fit=crop&q=80',
+     subs:['Casual Backpacks','Laptop Backpacks','Anti-Theft Bags','Stylish Backpacks','Tote Bags','Mini Backpacks','Handbags','Clutches','Sling Bags','Travel Bags','Waist Bags','Gym Bags','Duffle Bags'],
+     groups:[
+         {label:"🎒 Men's College Bags",items:['Casual Backpacks','Laptop Backpacks','Anti-Theft Bags']},
+         {label:"👜 Women's College Bags",items:['Stylish Backpacks','Tote Bags','Mini Backpacks']},
+         {label:"👜 Women's Bags",items:['Handbags','Clutches','Sling Bags']},
+         {label:"🧳 Travel & Gym",items:['Travel Bags','Waist Bags','Gym Bags','Duffle Bags']},
+     ]},
+    {id:'jewellery',name:'Jewellery',
+     photo:'https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=120&h=120&fit=crop&q=80',
+     subs:['Necklaces','Earrings','Rings','Bracelets & Bangles','Anklets','Jewelry Sets','Chains','Men Bracelets','Men Rings','Pendants','Kundan','Temple Jewelry','Bridal Sets','Minimal Jewelry','Layered Necklaces','Statement Pieces','Nose Pins','Hair Jewelry'],
+     groups:[
+         {label:"💍 Women's Jewelry",items:['Necklaces','Earrings','Rings','Bracelets & Bangles','Anklets','Jewelry Sets']},
+         {label:"⚡ Men's Jewelry",items:['Chains','Men Bracelets','Men Rings','Pendants']},
+         {label:"🪔 Traditional",items:['Kundan','Temple Jewelry','Bridal Sets']},
+         {label:"✨ Modern & Fashion",items:['Minimal Jewelry','Layered Necklaces','Statement Pieces']},
+         {label:"🌸 Accessories",items:['Nose Pins','Hair Jewelry']},
+     ]},
+    {id:'electronics',name:'Electronics',
+     photo:'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=120&h=120&fit=crop&q=80',
+     subs:['Phone Cases','Charging Cables','Power Banks','Selfie Sticks','Screen Protectors','Mobile Holders','USB Hubs','Earbuds','Wireless Headphones','Wired Headphones','Bluetooth Speakers','Neckbands','Gaming Controllers','Gaming Headsets','Gaming Mouse','Gaming Keyboards','Gaming Chairs','Smartwatches','Smart Bands','Smart Glasses','Mini Projectors','Smart Plugs','Laptop Stands','Keyboard & Mouse Combos','Webcams','USB Drives','Mouse Pads','LED Strip Lights','Table Fans','Desk Lamps','Digital Clocks','Air Purifiers','Ring Lights','Tripods','Green Screens','Lavalier Mics','Camera Lens Kits'],
+     groups:[
+         {label:'📱 Mobile Accessories',items:['Phone Cases','Charging Cables','Power Banks','Selfie Sticks','Screen Protectors','Mobile Holders','USB Hubs']},
+         {label:'🎧 Audio Devices',items:['Earbuds','Wireless Headphones','Wired Headphones','Bluetooth Speakers','Neckbands']},
+         {label:'🎮 Gaming',items:['Gaming Controllers','Gaming Headsets','Gaming Mouse','Gaming Keyboards','Gaming Chairs']},
+         {label:'⚡ Smart Gadgets',items:['Smartwatches','Smart Bands','Smart Glasses','Mini Projectors','Smart Plugs']},
+         {label:'💻 Computer Accessories',items:['Laptop Stands','Keyboard & Mouse Combos','Webcams','USB Drives','Mouse Pads']},
+         {label:'🏠 Home Electronics',items:['LED Strip Lights','Table Fans','Desk Lamps','Digital Clocks','Air Purifiers']},
+         {label:'🎬 Creator Tools',items:['Ring Lights','Tripods','Green Screens','Lavalier Mics','Camera Lens Kits']},
      ]},
 ];
 const GOLD_SUBCATS={Men:['Topwear','Bottomwear','Footwear'],Women:['Topwear','Bottomwear','Footwear']};
 function isPerfumeCategory(cat){return String(cat||'').toLowerCase()==='perfumes';}
 const PERFUME_ML_SIZES=['5ml','10ml','15ml','20ml','25ml','30ml','50ml','75ml','100ml','150ml','200ml','250ml','500ml'];
-const COMBO_SUBS=new Set(['Formal Combo (Shirt+Trouser+Belt+Tie)','Casual Combo (Tee+Baggy Jeans+Locket)','Streetwear Combo (Oversized Tee+Cargo+Chain)','Tracksuit (Full Upper & Lower)','Ethnic Combo (Kurta+Pant+Dupatta)','Sherwani Set (Sherwani+Pant+Dupatta)','Nehru Jacket Combo','Ethnic Set (Kurti+Pant+Dupatta)','Western Combo (Top+Straight Jeans+Belt)','Party Combo (Saree+Blouse+Belt)','Indo-Western (Top+Palazzo+Shrug)','Formal Combo','Casual Combo','Streetwear Combo','Tracksuit','Ethnic Combo','Sherwani Set','Ethnic Set','Western Combo','Party Combo','Indo-Western']);
+const COMBO_SUBS=new Set([
+    // Legacy combos (Men/Women subs within old categories)
+    'Formal Combo (Shirt+Trouser+Belt+Tie)','Casual Combo (Tee+Baggy Jeans+Locket)',
+    'Streetwear Combo (Oversized Tee+Cargo+Chain)','Tracksuit (Full Upper & Lower)',
+    'Ethnic Combo (Kurta+Pant+Dupatta)','Sherwani Set (Sherwani+Pant+Dupatta)','Nehru Jacket Combo',
+    'Ethnic Set (Kurti+Pant+Dupatta)','Western Combo (Top+Straight Jeans+Belt)',
+    'Party Combo (Saree+Blouse+Belt)','Indo-Western (Top+Palazzo+Shrug)',
+    'Formal Combo','Casual Combo','Streetwear Combo','Tracksuit',
+    'Ethnic Combo','Sherwani Set','Ethnic Set','Western Combo','Party Combo','Indo-Western',
+    // NEW: Combos category subs (Men Combos)
+    'Party Wear Combo','Gym Combo','Office Combo',
+    // NEW: Women Combos
+    'Casual Outfit Combo','College Wear Combo',
+    // NEW: Unisex Combos
+    'Couple Combo','Best Friend Combo','Matching Outfit Combo'
+]);
 const SUB_DISPLAY_MAP={'Cargo Jeans':'Cargo Pant','Formal Combo (Shirt+Trouser+Belt+Tie)':'Formal Combo','Casual Combo (Tee+Baggy Jeans+Locket)':'Casual Combo','Streetwear Combo (Oversized Tee+Cargo+Chain)':'Streetwear Combo','Tracksuit (Full Upper & Lower)':'Tracksuit','Ethnic Combo (Kurta+Pant+Dupatta)':'Ethnic Combo','Ethnic Combo (Kurta+Pant Set)':'Ethnic Combo','Sherwani Set (Sherwani+Pant+Dupatta)':'Sherwani Set','Sherwani Set (Sherwani+Pant Set)':'Sherwani Set','Ethnic Set (Kurti+Pant+Dupatta)':'Ethnic Set','Western Combo (Top+Straight Jeans+Belt)':'Western Combo','Party Combo (Saree+Blouse+Belt)':'Party Combo','Indo-Western (Top+Palazzo+Shrug)':'Indo-Western'};
 function getSubDisplayName(sub){return SUB_DISPLAY_MAP[sub]||sub;}
 
+function isComboCategory(cat){return String(cat||'').toLowerCase()==='combos';}
 function getComboSizeGroups(sizeArray=[]){
     const arr=(sizeArray||[]).map(s=>String(s||'').trim()).filter(Boolean);
     const topSet=new Set(['XS','S','M','L','XL','XXL','3XL','4XL','XXXL']);
-    return{topwear:arr.filter(s=>topSet.has(s.toUpperCase())),bottomwear:arr.filter(s=>/^\d+$/.test(s)&&Number(s)>=24&&Number(s)<=42),footwear:arr.filter(s=>/^\d+$/.test(s)&&Number(s)>=4&&Number(s)<=12),watch:arr.filter(s=>s.toLowerCase().includes('watch')||s.toLowerCase()==='free size')};
+    const topwear=arr.filter(s=>topSet.has(s.toUpperCase()));
+    const bottomwear=arr.filter(s=>/^\d+$/.test(s)&&Number(s)>=24&&Number(s)<=44);
+    const footwear=arr.filter(s=>/^\d+$/.test(s)&&Number(s)>=4&&Number(s)<=13&&!bottomwear.includes(s));
+    const freesize=arr.filter(s=>s.toLowerCase().includes('free')||s.toLowerCase()==='one size'||s.toLowerCase()==='onesize');
+    const accessories=arr.filter(s=>s.toLowerCase().includes('accessori'));
+    const watch=arr.filter(s=>s.toLowerCase().includes('watch'));
+    // Return ONLY what admin selected — no defaults
+    return{topwear,bottomwear,footwear,freesize,accessories,watch};
 }
 function _composeComboSizeLabel(){
     if(!selectedComboParts)return selectedSize;
@@ -108,6 +180,8 @@ function _composeComboSizeLabel(){
     if(selectedComboParts.topwear)parts.push(`Top:${selectedComboParts.topwear}`);
     if(selectedComboParts.bottomwear)parts.push(`Bottom:${selectedComboParts.bottomwear}`);
     if(selectedComboParts.footwear)parts.push(`Footwear:${selectedComboParts.footwear}`);
+    if(selectedComboParts.freesize)parts.push(`Size:${selectedComboParts.freesize}`);
+    if(selectedComboParts.accessories)parts.push(`Acc:${selectedComboParts.accessories}`);
     if(selectedComboParts.watch)parts.push(`Watch:${selectedComboParts.watch}`);
     selectedSize=parts.join(' | ')||selectedSize;return selectedSize;
 }
@@ -220,7 +294,7 @@ function handleSearch(q){
     const all=(products||[]).concat(goldProducts||[]);
     const allHits=all.filter(p=>(p.name||'').toLowerCase().includes(q)||(p.brand||'').toLowerCase().includes(q)||(p.category||'').toLowerCase().includes(q)||(p.sub||'').toLowerCase().includes(q));
     title.textContent=allHits.length?`"${q}" — ${allHits.length} results`:`"${q}" ke liye koi product nahi mila`;
-    grid.innerHTML=allHits.length?allHits.map(p=>createProductCard(p)).join(''):`<div class="col-span-full" style="text-align:center;padding:60px 0;"><i class="fas fa-search" style="font-size:3rem;color:#d1d5db;"></i><p style="font-size:1.1rem;font-weight:700;color:#9ca3af;margin-top:16px;">Koi product nahi mila</p></div>`;
+    grid.innerHTML=allHits.length?allHits.map(p=>createProductCard(p)).join(''):`<div class="col-span-full" style="text-align:center;padding:60px 0;"><i class="fas fa-search" style="font-size:3rem;color:#d1d5db;"></i><p style="font-size:1.1rem;font-weight:700;color:#9ca3af;margin-top:16px;">Koi product nahi mila</p><p style=\"font-size:0.85rem;color:#e11d48;margin-top:8px;font-weight:600;\">⌨️ Search karne ke liye Enter ya Search button dabao</p></div>`;
 }
 
 function _bindSearchEnterKeys(){
@@ -250,12 +324,10 @@ const PROMO_ADS=[
 ];
 let _promoIdx=0,_promoTimer=null,_promoInited=false;
 function _initExitIntentPromo(){
+    // EXIT INTENT POPUP DISABLED — mouseleave aur visibilitychange triggers removed
     if(_promoInited)return;_promoInited=true;
-    document.addEventListener('mouseleave',e=>{if(e.clientY<5&&!sessionStorage.getItem('ok_promo_shown'))_showPromo();});
-    document.addEventListener('visibilitychange',()=>{
-        if(document.visibilityState==='hidden'){sessionStorage.setItem('ok_promo_return','1');}
-        else if(document.visibilityState==='visible'&&sessionStorage.getItem('ok_promo_return')&&!sessionStorage.getItem('ok_promo_shown')){sessionStorage.removeItem('ok_promo_return');setTimeout(_showPromo,800);}
-    });
+    // document.addEventListener('mouseleave',...) — DISABLED
+    // document.addEventListener('visibilitychange',...) — DISABLED
 }
 function _showPromo(){if(sessionStorage.getItem('ok_promo_shown')||document.getElementById('ok-promo-overlay'))return;_buildPromoOverlay();_promoTimer=setInterval(_nextPromoSlide,5000);}
 function _buildPromoOverlay(){
@@ -276,29 +348,6 @@ window._goPromoSlide=idx=>{_promoIdx=idx;_renderPromoContent(idx);clearInterval(
 function _nextPromoSlide(){_promoIdx=(_promoIdx+1)%PROMO_ADS.length;_renderPromoContent(_promoIdx);}
 function closePromoAd(){clearInterval(_promoTimer);const card=document.getElementById('ok-promo-card');if(card)card.style.animation='okSlideDown 0.35s cubic-bezier(0.4,0,0.2,1) both';setTimeout(()=>{document.getElementById('ok-promo-overlay')?.remove();},380);sessionStorage.setItem('ok_promo_shown','1');}
 
-/* ============================================================
-   11. HOME — SUBCATEGORY STRIP + AI STRIP
-   ============================================================ */
-const _HOME_STRIPS=[
-    {label:'👔 Men',cat:'Men',items:['T-Shirts','Baggy Jeans','Oversized Tees','Hoodies','Sneakers','Cargo Pants']},
-    {label:'👗 Women',cat:'Women',items:['Kurtis','Sarees','Dresses','Straight Fit Jeans','Heels','Palazzo']},
-    {label:'🌸 Perfumes',cat:'Perfumes',items:["Men's Perfume","Women's Perfume",'Unisex Perfume','Attar / Ittar','Body Mist']},
-    {label:'🕶️ Accessories',cat:'Accessories',items:['Sunglasses','Watches','Wallets','Bags','Caps']},
-];
-function _renderHomeSubcatStrip(){
-    const home=document.getElementById('view-home');if(!home)return;
-    document.getElementById('ok-subcat-strip')?.remove();
-    const wrap=document.createElement('div');wrap.id='ok-subcat-strip';wrap.className='bg-white py-4 mt-2';
-    const html=['<div style="display:flex;align-items:center;justify-content:space-between;padding:0 16px;margin-bottom:12px;"><h3 style="font-weight:900;font-size:1.1rem;color:#111827;">Subcategories</h3></div>'];
-    _HOME_STRIPS.forEach(s=>{
-        html.push(`<div style="padding:0 16px;margin-bottom:12px;"><p style="font-size:10px;font-weight:900;color:#9ca3af;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">${s.label}</p><div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;">`);
-        s.items.forEach(sub=>html.push(`<button onclick="openSubcatProducts('${s.cat}','${sub.replace(/'/g,"\\'")}') " style="flex-shrink:0;padding:8px 16px;font-size:11px;font-weight:700;border:2px solid #e5e7eb;border-radius:9999px;background:white;color:#374151;cursor:pointer;white-space:nowrap;" onmouseover="this.style.borderColor='#e11d48';this.style.color='#e11d48'" onmouseout="this.style.borderColor='#e5e7eb';this.style.color='#374151'">${sub}</button>`));
-        html.push(`<button onclick="openCategoryPage('${s.cat}')" style="flex-shrink:0;padding:8px 16px;font-size:11px;font-weight:700;border:2px solid #fecdd3;border-radius:9999px;background:#fff1f2;color:#e11d48;cursor:pointer;white-space:nowrap;">View All →</button></div></div>`);
-    });
-    wrap.innerHTML=html.join('');
-    const bubbles=home.querySelector('.bg-white.py-4.mt-2');
-    if(bubbles)bubbles.insertAdjacentElement('afterend',wrap);else home.prepend(wrap);
-}
 
 function _renderHomeAIStrip(){
     const home=document.getElementById('view-home');if(!home)return;
@@ -680,7 +729,7 @@ function renderReferralList(containerId,items,type){
     }).join('');
 }
 function switchReferralTab(tab){['pending','confirmed','cancelled'].forEach(t=>{const btn=document.getElementById(`btn-ref-${t}`),list=document.getElementById(`referrals-${t}-list`),isActive=t===tab;if(btn)btn.className=isActive?'pb-2 px-4 text-sm font-bold text-green-600 border-b-2 border-green-600 whitespace-nowrap':'pb-2 px-4 text-sm font-bold text-gray-500 hover:text-gray-700 whitespace-nowrap';if(list)list.classList.toggle('hidden',!isActive);});}
-function renderSidebarReferralWidget(){const container=document.getElementById('sidebar-referral-widget');if(!container||!currentUser)return;const code=currentUser.referral_code||generateReferralCode(currentUser.name,currentUser.mobile);container.innerHTML=`<div class="px-3 pb-3 bg-gradient-to-br from-green-50 to-emerald-50 border-t border-green-100"><div class="mt-2 bg-white rounded-lg p-2.5 border border-dashed border-green-300"><p class="text-[9px] font-black text-gray-400 uppercase tracking-wider mb-0.5">${i18n('referral_code')}</p><div class="flex items-center justify-between gap-2"><span class="text-lg font-black text-green-600 tracking-widest" id="sidebar-referral-code">${code}</span><button onclick="copyReferralCode()" class="bg-green-500 text-white text-[10px] font-black px-2.5 py-1 rounded-lg hover:bg-green-600 active:scale-95 transition-all whitespace-nowrap"><i class="fas fa-copy mr-0.5"></i> Copy</button></div><p class="text-[9px] text-gray-400 mt-1">${i18n('earn_5pct')}</p></div><a href="${INSTAGRAM_URL}" target="_blank" rel="noopener" class="mt-2 flex items-center justify-center gap-2 w-full py-2 rounded-lg font-bold text-xs text-white" style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)"><i class="fab fa-instagram text-sm"></i> Follow @OutfitKart</a></div>`;}
+function renderSidebarReferralWidget(){const container=document.getElementById('sidebar-referral-widget');if(!container||!currentUser)return;const code=currentUser.referral_code||generateReferralCode(currentUser.name,currentUser.mobile);container.innerHTML=`<div class="px-3 pb-3 bg-gradient-to-br from-green-50 to-emerald-50 border-t border-green-100"><div class="mt-2 bg-white rounded-lg p-2.5 border border-dashed border-green-300"><p class="text-[9px] font-black text-gray-400 uppercase tracking-wider mb-0.5">${i18n('referral_code')}</p><div class="flex items-center justify-between gap-2"><span class="text-lg font-black text-green-600 tracking-widest" id="sidebar-referral-code">${code}</span><button onclick="copyReferralCode()" class="bg-green-500 text-white text-[10px] font-black px-2.5 py-1 rounded-lg hover:bg-green-600 active:scale-95 transition-all whitespace-nowrap"><i class="fas fa-copy mr-0.5"></i> Copy</button></div><p class="text-[9px] text-gray-400 mt-1">${i18n('earn_5pct')}</p></div><a href="${INSTAGRAM_URL}" target="_blank" rel="noopener" class="mt-2 flex items-center justify-center gap-2 w-full py-2 rounded-lg font-bold text-xs text-white" style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)"><i class="fab fa-instagram text-sm"></i> Follow @OutfitKart</a><a href="${YOUTUBE_URL}" target="_blank" rel="noopener" class="mt-1.5 flex items-center justify-center gap-2 w-full py-2 rounded-lg font-bold text-xs text-white" style="background:linear-gradient(135deg,#ff0000,#cc0000)"><i class="fab fa-youtube text-sm"></i> Subscribe on YouTube</a></div>`;}
 function updateHeaderWallet(balance){const el=document.getElementById('header-wallet-display'),pill=document.getElementById('header-wallet-pill');if(!el)return;if(balance>0){el.textContent='₹'+balance.toLocaleString();if(pill){pill.classList.remove('hidden');pill.classList.add('flex');}}else{if(pill){pill.classList.add('hidden');pill.classList.remove('flex');}}}
 
 /* ============================================================
@@ -745,7 +794,7 @@ function createProductCard(p,forceGold=false){
         const discPct=hasDiscount?Math.round(((p.oldprice-p.price)/p.oldprice)*100):0;
         const isPerf=isPerfumeCategory(p.category);
         const sizes=isPerf?(p.available_sizes?.length?p.available_sizes:PERFUME_ML_SIZES):(p.available_sizes||getDefaultSizes(p.sub||p.category));
-        const isCombo=COMBO_SUBS.has(p.sub||'');const isGold=p.is_gold||forceGold;
+        const isCombo=COMBO_SUBS.has(p.sub||'')||isComboCategory(p.category||'');const isGold=p.is_gold||forceGold;
         const sizeLabel=isPerf?`Vol: ${sizes.slice(0,3).join(' · ')}${sizes.length>3?' +more':''}`:`Sizes: ${sizes.slice(0,3).join(' · ')}${sizes.length>3?' +more':''}`;
         let topLeftBadge='';
         if(isGold){topLeftBadge=`<div class="absolute top-2 left-2 z-20 text-[10px] font-black px-2.5 py-1 rounded-full shadow-md" style="background:linear-gradient(135deg,#C9A84C,#F5E6C0);color:#3d2c00;border:1px solid rgba(201,168,76,0.5);">⭐ GOLD</div>`;}
@@ -783,8 +832,7 @@ function renderProductGrid(containerId,list,loading=false){
 
 function renderCategoryBubbles(){
     const container=document.getElementById('category-bubbles');if(!container)return;
-    let html=CATEGORIES.map(c=>`<div class="flex flex-col items-center gap-2 cursor-pointer min-w-[72px] active:scale-95 transition-transform" onclick="openCategoryPage('${c.name}')"><div class="w-16 h-16 rounded-full overflow-hidden border-2 border-white shadow-md hover:scale-110 transition-transform flex-shrink-0" style="box-shadow:0 4px 12px rgba(0,0,0,0.15)"><img src="${c.photo}" alt="${c.name}" class="w-full h-full object-cover" loading="lazy" onerror="this.parentNode.innerHTML='<div style=\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#e11d48,#be123c);color:white;font-size:1.5rem;\\'>👗</div>'"></div><span class="text-xs font-semibold text-gray-700 whitespace-nowrap">${c.name}</span></div>`).join('');
-    html+=`<div class="flex flex-col items-center gap-2 cursor-pointer min-w-[72px] active:scale-95 transition-transform" onclick="navigate('gold')"><div class="w-16 h-16 rounded-full flex items-center justify-center text-2xl hover:scale-110 transition-transform flex-shrink-0" style="background:linear-gradient(135deg,#1a0800,#3d2c00,#C9A84C);border:2.5px solid #C9A84C;box-shadow:0 4px 16px rgba(201,168,76,0.5);">⭐</div><span class="text-xs font-bold whitespace-nowrap" style="color:#B8860B;">Gold</span></div>`;
+    let html=CATEGORIES.map(c=>`<div class="flex flex-col items-center gap-2 cursor-pointer min-w-[72px] active:scale-95 transition-transform" onclick="(function(){if(typeof window._openCategoriesTo==='function'){window._openCategoriesTo('${c.name}');}else if(typeof window._openCategories==='function'){window._openCategories();}else{openCategoryPage('${c.name}');}})()" ><div class="w-16 h-16 rounded-full overflow-hidden border-2 border-white shadow-md hover:scale-110 transition-transform flex-shrink-0" style="box-shadow:0 4px 12px rgba(0,0,0,0.15)"><img src="${c.photo}" alt="${c.name}" class="w-full h-full object-cover" loading="lazy" onerror="this.parentNode.innerHTML='<div style=\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#e11d48,#be123c);color:white;font-size:1.5rem;\\'>\u{1F457}</div>'"></div><span class="text-xs font-semibold text-gray-700 whitespace-nowrap">${c.name}</span></div>`).join('');
     container.innerHTML=html;
 }
 
@@ -962,16 +1010,19 @@ function renderWishlist(){const container=document.getElementById('wishlist-cont
    ============================================================ */
 async function openProductPage(id, isGoldProduct = false) {
     let p = products.find(x => x.id === id); if (!p) p = goldProducts.find(x => x.id === id); if (!p) return;
+    window._pdpPreviousView = currentView || 'home';
     viewingProductId = p.id; addToRecentlyViewed(id);
     const isPerf = isPerfumeCategory(p.category);
     const sizeArray = isPerf ? (p.available_sizes?.length ? p.available_sizes : PERFUME_ML_SIZES) : (p.available_sizes?.length ? p.available_sizes : getDefaultSizes(p.sub || p.category));
-    const isCombo = COMBO_SUBS.has(p.sub || ''); selectedComboParts = null; selectedSize = sizeArray[1] || sizeArray[0];
+    const isCombo = COMBO_SUBS.has(p.sub || '') || isComboCategory(p.category || ''); selectedComboParts = null; selectedSize = sizeArray[1] || sizeArray[0];
 
     if (isCombo) {
         const groups = getComboSizeGroups(sizeArray); selectedComboParts = {};
         if (groups.topwear.length) selectedComboParts.topwear = groups.topwear[0];
         if (groups.bottomwear.length) selectedComboParts.bottomwear = groups.bottomwear[0];
         if (groups.footwear.length) selectedComboParts.footwear = groups.footwear[0];
+        if (groups.freesize.length) selectedComboParts.freesize = groups.freesize[0];
+        if (groups.accessories.length) selectedComboParts.accessories = groups.accessories[0];
         if (groups.watch.length) selectedComboParts.watch = groups.watch[0];
         _composeComboSizeLabel();
     }
@@ -1042,10 +1093,22 @@ async function openProductPage(id, isGoldProduct = false) {
             </div>` : 
             `${isCombo ? (() => {
                 const groups = getComboSizeGroups(sizeArray);
-                const groupOrder = [['topwear', 'Topwear'], ['bottomwear', 'Bottomwear'], ['footwear', 'Footwear'], ['watch', 'Watch']];
-                return groupOrder.filter(([k]) => groups[k]?.length).map(([k, label]) => `
+                const groupOrder = [
+                    ['topwear',    '👕 Topwear Size',    'S, M, L, XL...'],
+                    ['bottomwear', '👖 Bottomwear Size',  '28, 30, 32...'],
+                    ['footwear',   '👟 Footwear Size',    '6, 7, 8, 9...'],
+                    ['freesize',   '📐 Size',             'Free Size'],
+                    ['accessories','🕶️ Accessories',      'Free Size'],
+                    ['watch',      '⌚ Watch',            'Free Size'],
+                ];
+                const activeGroups = groupOrder.filter(([k]) => groups[k]?.length);
+                if (!activeGroups.length) return `<div class="flex flex-wrap gap-2" id="size-selector">${sizeArray.map(s=>`<button onclick="selectSize('${s}')" class="size-btn ${s===selectedSize?'selected':''} px-4 py-2 min-w-[3.5rem] rounded-xl border border-gray-200 font-bold text-sm transition-all">${s}</button>`).join('')}</div>`;
+                return activeGroups.map(([k, label, hint]) => `
                 <div class="mb-4">
-                    <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">${label}</div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="text-[11px] font-black text-gray-700 uppercase tracking-widest">${label}</div>
+                        <div class="text-[9px] text-gray-400 font-semibold">${hint}</div>
+                    </div>
                     <div class="flex flex-wrap gap-2" id="combo-size-${k}">
                         ${groups[k].map(s => `<button onclick="selectComboPartSize('${k}','${s}')" class="size-btn ${(selectedComboParts && selectedComboParts[k] === s) ? 'selected' : ''} px-4 py-2 min-w-[3.5rem] rounded-xl border border-gray-200 font-bold text-sm transition-all">${s}</button>`).join('')}
                     </div>
