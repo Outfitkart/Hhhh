@@ -33,8 +33,8 @@
         .admin-nav-btn.active .nav-icon { background: #7c3aed; color: white; }
         .admin-nav-btn:not(.active) .nav-icon { background: #f3f4f6; color: #6b7280; }
         .admin-nav-btn:hover:not(.active) .nav-icon { background: #ede9fe; color: #7c3aed; }
-        #btn-admin-gold.active { background: linear-gradient(90deg,#fffbeb,#fef3c7) !important; border-left: 3px solid #C9A84C !important; }
-        #btn-admin-gold.active .nav-icon { background: linear-gradient(135deg,#C9A84C,#B8860B) !important; color: #1a0800 !important; }
+        #btn-admin-electronics.active { background: linear-gradient(90deg,#eff6ff,#dbeafe) !important; border-left: 3px solid #3b82f6 !important; }
+        #btn-admin-electronics.active .nav-icon { background: linear-gradient(135deg,#1d4ed8,#3b82f6) !important; color: white !important; }
         #btn-admin-promo.active { background: linear-gradient(90deg,#fff1f2,#ffe4e6) !important; border-left: 3px solid #e11d48 !important; }
         #btn-admin-promo.active .nav-icon { background: linear-gradient(135deg,#e11d48,#be123c) !important; color: white !important; }
         .size-btn.selected { border-color: #e11d48; background-color: #e11d48; color: white; }
@@ -83,7 +83,7 @@
             #checkout-step-2 > div > div, #checkout-step-3 > div > div { width: 100% !important; }
         }
         @media (max-width: 640px) {
-            #admin-tab-products, #admin-tab-inventory, #admin-tab-order, #admin-tab-users, #admin-tab-payout, #admin-tab-referrals, #admin-tab-influencer, #admin-tab-dashboard, #admin-tab-gold, #admin-tab-promo { padding: 0.75rem; }
+            #admin-tab-products, #admin-tab-inventory, #admin-tab-order, #admin-tab-users, #admin-tab-payout, #admin-tab-referrals, #admin-tab-influencer, #admin-tab-dashboard, #admin-tab-electronics, #admin-tab-promo { padding: 0.75rem; }
             .admin-order-items { max-height: 240px; }
         }
         #cart-sidebar { display: flex; flex-direction: column; }
@@ -230,7 +230,7 @@
             <div class="md:hidden p-3 bg-white z-20">
                 <div class="flex items-center bg-gray-100 rounded-md relative border border-transparent focus-within:border-rose-500 focus-within:bg-white shadow-sm">
                     <i class="fas fa-search text-gray-400 pl-3"></i>
-                    <input type="text" id="mobile-search" placeholder="Search..." class="w-full bg-transparent py-2 px-3 focus:outline-none text-sm" oninput="handleSearch(this.value)">
+                    <input type="text" id="mobile-search" placeholder="Search..." class="w-full bg-transparent py-2 px-3 focus:outline-none text-sm" oninput="handleSearch(this.value)" onkeydown="if(event.key==='Enter'&&this.value.trim().length>=2){handleSearch(this.value);document.querySelectorAll('.view-section').forEach(v=>v.classList.add('hidden'));var sv=document.getElementById('view-search');if(sv)sv.classList.remove('hidden');window.currentView='search';if(typeof updateBottomNav==='function')updateBottomNav();window.scrollTo(0,0);['desktop-search-results','mobile-search-results'].forEach(function(rid){var r=document.getElementById(rid);if(r)r.classList.add('hidden');});}" inputmode="search">
                     <button id="voice-search-btn" onclick="startVoiceSearch()" class="flex-shrink-0 px-2 text-gray-400 hover:text-rose-600 transition-colors" title="Voice Search"><i class="fas fa-microphone text-sm"></i></button>
                     <div class="h-5 w-px bg-gray-300"></div>
                     <select id="price-sort-mobile" onchange="sortProducts(this.value)" class="bg-transparent text-xs text-gray-700 font-bold focus:outline-none py-2 pl-2 pr-2 cursor-pointer max-w-[85px] appearance-none">
@@ -322,15 +322,7 @@
                     <div class="col-span-full text-center py-10"><i class="fas fa-spinner fa-spin text-rose-500 text-3xl"></i><p class="mt-2 text-gray-500">Loading...</p></div>
                 </div>
             </div>
-            <div class="mt-4 mx-4 mb-4">
-                <a href="https://www.instagram.com/outfitkart_ecommers?igsh=MWUwNTNzczI4YjZsdw==" target="_blank" rel="noopener"
-                   class="flex items-center justify-center gap-3 w-full py-3 rounded-2xl font-bold text-white text-sm shadow-lg"
-                   style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);box-shadow:0 4px 20px rgba(253,29,29,0.3);">
-                    <i class="fab fa-instagram text-xl"></i>
-                    Follow OutfitKart on Instagram
-                    <i class="fas fa-external-link-alt text-xs opacity-70"></i>
-                </a>
-            </div>
+
         </div>
 
         <!-- GOLD VIEW -->
@@ -375,7 +367,7 @@
 
         <!-- PRODUCT DETAIL PAGE -->
         <div id="view-product" class="view-section hidden p-4 md:p-8 max-w-6xl mx-auto">
-            <button onclick="history.length>1?history.back():navigate('home')" class="text-gray-500 text-sm mb-4 flex items-center gap-1 hover:text-gray-700"><i class="fas fa-arrow-left"></i> Back</button>
+            <button onclick="navigate(window._pdpPreviousView||'home')" class="text-gray-500 text-sm mb-4 flex items-center gap-1 hover:text-gray-700"><i class="fas fa-arrow-left"></i> Back</button>
             <div class="grid md:grid-cols-2 gap-8 bg-white p-4 rounded-xl shadow-sm border" id="pdp-container"></div>
 
             <!-- PRODUCT PROMO CODE SECTION -->
@@ -922,8 +914,131 @@
                     </div>
                     <div class="profile-page-body">
                         <div class="max-w-lg mx-auto p-4 space-y-3">
-                            <div class="border rounded-xl overflow-hidden"><button class="w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 font-bold flex justify-between text-sm" onclick="this.nextElementSibling.classList.toggle('hidden')">FAQs <i class="fas fa-chevron-down text-gray-500"></i></button><div class="p-4 bg-white hidden text-sm text-gray-600 space-y-3 border-t"><p><strong>Q: Delivery kitne din mein hogi?</strong><br>A: Standard delivery 3-5 working days mein hogi.</p><p><strong>Q: COD available hai?</strong><br>A: Haan, Cash on Delivery available hai.</p><p><strong>Q: Exchange kaise karein?</strong><br>A: Unused items 7 days ke andar exchange kar sakte hain.</p><p><strong>Q: Wallet balance kaise earn karein?</strong><br>A: Referral links share karke 5% commission earn kar sakte hain.</p><p><strong>Q: Referral commission kab milega?</strong><br>A: Order ke 30 din baad commission confirm hota hai — delivery + return window complete hone ke baad.</p></div></div>
-                            <div class="border rounded-xl overflow-hidden"><button class="w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 font-bold flex justify-between text-sm" onclick="this.nextElementSibling.classList.toggle('hidden')">Terms &amp; Conditions <i class="fas fa-chevron-down text-gray-500"></i></button><div class="p-4 bg-white hidden text-sm text-gray-600 space-y-3 border-t"><p><strong>Return &amp; Refund:</strong> Unused items 7 days ke andar return. COD ₹9 fee non-refundable.</p><p><strong>Referral:</strong> Commission 5%, 30 days baad confirm. Fake referrals pe ban.</p><p><strong>Wallet:</strong> Min withdrawal ₹120. 24-48 hours processing.</p></div></div>
+
+                            <!-- About OutfitKart -->
+                            <div class="border rounded-xl overflow-hidden">
+                                <button class="w-full text-left px-4 py-3.5 font-bold flex justify-between items-center text-sm text-rose-700" style="background:linear-gradient(to right,#fff1f2,#fff5f6);" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                                    <span>🛍️ About OutfitKart</span><i class="fas fa-chevron-down text-rose-400 text-xs"></i>
+                                </button>
+                                <div class="p-4 bg-white hidden text-sm text-gray-600 space-y-2 border-t">
+                                    <p>OutfitKart ek premium fashion e-commerce platform hai — trendy aur affordable clothing, perfumes, accessories aur combos ke liye.</p>
+                                    <p><strong>Contact:</strong> WhatsApp: +91 8982296773 | Email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d5baa0a1b3bca1beb4a7a1a5a7b0b8bca0b8b3b4a6bdbcbabb95b2b8b4bcb9fbb6bab8">[email&#160;protected]</a></p>
+                                    <p><strong>Follow Us:</strong> Instagram @outfitkart_official | Telegram @outfitkart</p>
+                                </div>
+                            </div>
+
+                            <!-- FAQs -->
+                            <div class="border rounded-xl overflow-hidden">
+                                <button class="w-full text-left px-4 py-3.5 bg-gray-50 hover:bg-gray-100 font-bold flex justify-between items-center text-sm" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                                    <span>❓ FAQs</span><i class="fas fa-chevron-down text-gray-500 text-xs"></i>
+                                </button>
+                                <div class="p-4 bg-white hidden text-sm text-gray-600 space-y-3 border-t">
+                                    <div class="bg-gray-50 rounded-lg p-3"><p class="font-bold text-gray-800 mb-1">Q: Delivery kitne din mein hogi?</p><p>A: 3–5 working days. Remote areas mein 5–7 din.</p></div>
+                                    <div class="bg-gray-50 rounded-lg p-3"><p class="font-bold text-gray-800 mb-1">Q: COD available hai?</p><p>A: Haan! ₹9 COD handling fee lagti hai.</p></div>
+                                    <div class="bg-gray-50 rounded-lg p-3"><p class="font-bold text-gray-800 mb-1">Q: Exchange kaise karein?</p><p>A: Delivery ke 7 din andar "My Orders" se request karo.</p></div>
+                                    <div class="bg-gray-50 rounded-lg p-3"><p class="font-bold text-gray-800 mb-1">Q: Wallet balance kaise earn karein?</p><p>A: Referral se har purchase pe 5% commission milta hai.</p></div>
+                                    <div class="bg-gray-50 rounded-lg p-3"><p class="font-bold text-gray-800 mb-1">Q: Referral commission kab milega?</p><p>A: Order ke 30 din baad confirm hota hai.</p></div>
+                                    <div class="bg-gray-50 rounded-lg p-3"><p class="font-bold text-gray-800 mb-1">Q: Promo codes kahan milenge?</p><p>A: Telegram @outfitkart aur WhatsApp Channel pe.</p></div>
+                                </div>
+                            </div>
+
+                            <!-- Shipping Policy -->
+                            <div class="border rounded-xl overflow-hidden">
+                                <button class="w-full text-left px-4 py-3.5 bg-gray-50 hover:bg-gray-100 font-bold flex justify-between items-center text-sm" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                                    <span>🚚 Shipping Policy</span><i class="fas fa-chevron-down text-gray-500 text-xs"></i>
+                                </button>
+                                <div class="p-4 bg-white hidden text-sm text-gray-600 space-y-3 border-t">
+                                    <div class="flex items-start gap-3 bg-green-50 rounded-lg p-3 border border-green-200">
+                                        <i class="fas fa-check-circle text-green-500 mt-0.5 flex-shrink-0"></i>
+                                        <div><strong class="text-gray-800">FREE Delivery — Sabhi Orders Pe</strong><p class="text-xs mt-0.5">Koi minimum order amount nahi.</p></div>
+                                    </div>
+                                    <p><strong>Processing Time:</strong> Order ke baad 24–48 hours mein dispatch.</p>
+                                    <p><strong>Delivery Time:</strong> Metro cities: 3–5 days | Other areas: 5–7 days.</p>
+                                    <p><strong>COD Handling Fee:</strong> ₹9 per order (non-refundable).</p>
+                                    <p><strong>Tracking:</strong> "My Orders" mein real-time tracking available hai.</p>
+                                </div>
+                            </div>
+
+                            <!-- Return & Refund Policy -->
+                            <div class="border rounded-xl overflow-hidden">
+                                <button class="w-full text-left px-4 py-3.5 bg-gray-50 hover:bg-gray-100 font-bold flex justify-between items-center text-sm" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                                    <span>↩️ Return &amp; Refund Policy</span><i class="fas fa-chevron-down text-gray-500 text-xs"></i>
+                                </button>
+                                <div class="p-4 bg-white hidden text-sm text-gray-600 space-y-3 border-t">
+                                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                        <p class="font-bold text-blue-800 mb-1"><i class="fas fa-info-circle mr-1"></i>7-Day Exchange Policy</p>
+                                        <p class="text-xs text-blue-700">Direct return nahi hoti. Delivery ke 7 din ke andar exchange request kar sakte hain.</p>
+                                    </div>
+                                    <p><strong>Exchange Conditions:</strong> Unused condition, original tags intact, 7 days ke andar.</p>
+                                    <p><strong>Cancellation Refund:</strong> "Processing" status mein cancel karo. UPI/Card refund 5–7 days mein.</p>
+                                    <p><strong>Wallet Refund:</strong> Wallet payments cancel hone pe turant credit.</p>
+                                    <p><strong>COD Fee:</strong> ₹9 handling fee non-refundable hai.</p>
+                                    <p><strong>Non-Exchangeable:</strong> Innerwear, opened perfumes, customised items.</p>
+                                </div>
+                            </div>
+
+                            <!-- Privacy Policy -->
+                            <div class="border rounded-xl overflow-hidden">
+                                <button class="w-full text-left px-4 py-3.5 bg-gray-50 hover:bg-gray-100 font-bold flex justify-between items-center text-sm" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                                    <span>🔒 Privacy Policy</span><i class="fas fa-chevron-down text-gray-500 text-xs"></i>
+                                </button>
+                                <div class="p-4 bg-white hidden text-sm text-gray-600 space-y-3 border-t">
+                                    <p><strong>Data Collection:</strong> Sirf naam, mobile, delivery address — order ke liye zaroori data.</p>
+                                    <p><strong>Data Usage:</strong> Order processing aur delivery ke liye. Kisi third party ko share nahi.</p>
+                                    <p><strong>Payment Security:</strong> Razorpay secure gateway use hoti hai. Card/UPI details store nahi hote.</p>
+                                    <p><strong>Data Deletion:</strong> WhatsApp pe request karo — 7 days mein delete kar diya jaayega.</p>
+                                    <p class="text-xs text-gray-400">Last updated: January 2026</p>
+                                </div>
+                            </div>
+
+                            <!-- Terms & Conditions -->
+                            <div class="border rounded-xl overflow-hidden">
+                                <button class="w-full text-left px-4 py-3.5 bg-gray-50 hover:bg-gray-100 font-bold flex justify-between items-center text-sm" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                                    <span>📋 Terms &amp; Conditions</span><i class="fas fa-chevron-down text-gray-500 text-xs"></i>
+                                </button>
+                                <div class="p-4 bg-white hidden text-sm text-gray-600 space-y-3 border-t">
+                                    <p><strong>General:</strong> 18+ users account bana sakte hain. Ek mobile = ek account.</p>
+                                    <p><strong>Orders:</strong> "Processing" status mein hi cancel hoga. Delivered orders 7 days exchange eligible.</p>
+                                    <p><strong>Referral:</strong> 5% commission, 30 days baad confirm. Fake referrals pe permanent ban.</p>
+                                    <p><strong>Wallet:</strong> Min withdrawal ₹120, 24–48 hours processing. Non-transferable.</p>
+                                    <p><strong>Influencer:</strong> Sirf approved submissions pe payment. Fake views pe ban.</p>
+                                    <p><strong>Prohibited:</strong> Fraudulent orders, fake accounts, system manipulation ban hai.</p>
+                                    <p class="text-xs text-gray-400">Last updated: January 2026</p>
+                                </div>
+                            </div>
+
+                            <!-- Contact Support -->
+                            <div class="border rounded-xl overflow-hidden">
+                                <button class="w-full text-left px-4 py-3.5 bg-gray-50 hover:bg-gray-100 font-bold flex justify-between items-center text-sm" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                                    <span>📞 Contact &amp; Support</span><i class="fas fa-chevron-down text-gray-500 text-xs"></i>
+                                </button>
+                                <div class="p-4 bg-white hidden text-sm text-gray-600 space-y-3 border-t">
+                                    <a href="https://wa.me/918982296773" target="_blank" rel="noopener" class="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl p-3 active:scale-95 transition-all">
+                                        <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0"><i class="fab fa-whatsapp text-green-500 text-lg"></i></div>
+                                        <div><div class="font-bold text-sm text-gray-800">WhatsApp Support</div><div class="text-xs text-gray-500">+91 8982296773 · 10am–8pm</div></div>
+                                        <i class="fas fa-chevron-right text-gray-300 text-xs ml-auto"></i>
+                                    </a>
+                                    <a href="/cdn-cgi/l/email-protection#bed1cbcad8d7cad5dfcccaceccdbd3d7cbd3d8dfcdd6d7d1d0fed9d3dfd7d290ddd1d3" target="_blank" rel="noopener" class="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl p-3 active:scale-95 transition-all">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0"><i class="fas fa-envelope text-blue-500 text-lg"></i></div>
+                                        <div><div class="font-bold text-sm text-gray-800">Email Support</div><div class="text-xs text-gray-500"><span class="__cf_email__" data-cfemail="f19e84859798859a9083858183949c98849c97908299989e9fb1969c90989ddf929e9c">[email&#160;protected]</span></div></div>
+                                        <i class="fas fa-chevron-right text-gray-300 text-xs ml-auto"></i>
+                                    </a>
+                                    <a href="https://t.me/outfitkart" target="_blank" rel="noopener" class="flex items-center gap-3 rounded-xl p-3 active:scale-95 transition-all border border-blue-200" style="background:#eff6ff;">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-blue-100"><i class="fab fa-telegram text-blue-500 text-lg"></i></div>
+                                        <div><div class="font-bold text-sm text-gray-800">Telegram Channel</div><div class="text-xs text-gray-500">Promo codes + updates</div></div>
+                                        <i class="fas fa-chevron-right text-gray-300 text-xs ml-auto"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Footer info -->
+                            <div class="text-center py-5 text-xs text-gray-400 space-y-1">
+                                <p class="font-bold text-gray-500 text-sm">OutfitKart</p>
+                                <p>Premium Fashion at Best Prices</p>
+                                <p>© 2026 OutfitKart. All rights reserved.</p>
+                                <p>Made with ❤️ in India 🇮🇳</p>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -969,10 +1084,10 @@
                         <div class="admin-nav-section-label mt-2">Catalog</div>
                         <button onclick="switchAdminTab('products')" id="btn-admin-products" class="admin-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-sm transition-all"><span class="nav-icon"><i class="fas fa-box-open"></i></span><span class="flex-1 text-left">All Products</span><span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full font-bold" id="sidebar-product-count">0</span></button>
                         <button onclick="switchAdminTab('inventory')" id="btn-admin-inventory" class="admin-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-sm transition-all"><span class="nav-icon"><i class="fas fa-plus-circle"></i></span><span class="flex-1 text-left">Add Product</span></button>
-                        <div class="admin-nav-section-label mt-2" style="color:#B8860B;">⭐ Gold</div>
-                        <button onclick="switchAdminTab('gold')" id="btn-admin-gold" class="admin-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-sm transition-all">
-                            <span class="nav-icon" style="background:linear-gradient(135deg,#C9A84C,#B8860B);color:#1a0800;font-size:15px;font-weight:900;">⭐</span>
-                            <span class="flex-1 text-left font-bold" style="color:#B8860B;">Gold Products</span>
+                        <div class="admin-nav-section-label mt-2" style="color:#1d4ed8;">⚡ Electronics</div>
+                        <button onclick="switchAdminTab('electronics')" id="btn-admin-electronics" class="admin-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-sm transition-all">
+                            <span class="nav-icon" style="background:linear-gradient(135deg,#1e3a8a,#3b82f6);color:white;font-size:14px;">⚡</span>
+                            <span class="flex-1 text-left font-bold" style="color:#1d4ed8;">Electronics</span>
                         </button>
                         <div class="admin-nav-section-label mt-2">Operations</div>
                         <button onclick="switchAdminTab('order')" id="btn-admin-order" class="admin-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-sm transition-all"><span class="nav-icon"><i class="fas fa-shopping-cart"></i></span><span class="flex-1 text-left">Orders</span><span class="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold hidden" id="sidebar-orders-badge">!</span></button>
@@ -1044,7 +1159,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <input type="text" id="ap-name" placeholder="Product Name *" required class="w-full border p-2.5 rounded-lg text-sm outline-none">
                                 <input type="number" id="ap-price" placeholder="Selling Price (Auto-calc)" required class="w-full border p-2.5 rounded-lg text-sm text-blue-600 font-bold outline-none">
-                                <select id="ap-category" onchange="updateDropdownSubs('ap-category','ap-sub'); updateSizeSection(this.value)" class="w-full border p-2.5 rounded-lg text-sm bg-white" required><option value="Men">Men</option><option value="Women">Women</option><option value="Perfumes">Perfumes</option><option value="Accessories">Accessories</option></select>
+                                <select id="ap-category" onchange="updateDropdownSubs('ap-category','ap-sub'); updateSizeSection(this.value)" class="w-full border p-2.5 rounded-lg text-sm bg-white" required><option value="Men">Men</option><option value="Women">Women</option><option value="Perfumes">Perfumes</option><option value="Combos">Combos</option><option value="Accessories">Accessories</option><option value="Bags">Bags</option><option value="Jewellery">Jewellery</option><option value="Electronics">Electronics</option></select>
                                 <select id="ap-sub" class="w-full border p-2.5 rounded-lg text-sm bg-white" required><option value="">Select Subcategory</option></select>
                                 <input type="text" id="ap-brand" placeholder="Brand Name *" required class="w-full border p-2.5 rounded-lg text-sm outline-none">
                                 <div class="md:col-span-2">
@@ -1086,7 +1201,7 @@
                                     <input type="text" id="ep-name" placeholder="Product Name" required class="w-full border p-2.5 rounded-lg text-sm outline-none">
                                     <input type="number" id="ep-price" placeholder="Selling Price" required class="w-full border p-2.5 rounded-lg text-sm text-blue-600 font-bold outline-none">
                                     <input type="number" id="ep-margin-amt" placeholder="Margin Amount" class="w-full border p-2.5 rounded-lg text-sm text-green-600 font-bold outline-none">
-                                    <select id="ep-category" onchange="updateDropdownSubs('ep-category','ep-sub')" class="w-full border p-2.5 rounded-lg text-sm bg-white" required><option value="Men">Men</option><option value="Women">Women</option><option value="Perfumes">Perfumes</option><option value="Accessories">Accessories</option></select>
+                                    <select id="ep-category" onchange="updateDropdownSubs('ep-category','ep-sub')" class="w-full border p-2.5 rounded-lg text-sm bg-white" required><option value="Men">Men</option><option value="Women">Women</option><option value="Perfumes">Perfumes</option><option value="Combos">Combos</option><option value="Accessories">Accessories</option><option value="Bags">Bags</option><option value="Jewellery">Jewellery</option><option value="Electronics">Electronics</option></select>
                                     <select id="ep-sub" class="w-full border p-2.5 rounded-lg text-sm bg-white" required><option value="">Select Subcategory</option></select>
                                     <input type="text" id="edit-ap-brand" placeholder="Brand Name" required class="w-full border p-2.5 rounded-lg text-sm outline-none">
                                 </div>
@@ -1176,18 +1291,33 @@
                         </div>
                     </div>
 
-                    <div id="admin-tab-gold" class="admin-content-tab hidden space-y-3">
+                    <div id="admin-tab-electronics" class="admin-content-tab hidden space-y-3">
                         <div class="bg-white p-4 md:p-6 rounded-xl shadow-md border border-gray-100">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="font-bold text-lg flex items-center gap-2" style="color:#B8860B;">⭐ OutfitKart Gold Products</h3>
-                                <button onclick="loadAdminGoldProducts()" class="text-xs px-3 py-1.5 rounded-lg font-bold border" style="background:#fffbeb;color:#B8860B;border-color:#C9A84C;"><i class="fas fa-sync-alt mr-1"></i>Refresh</button>
-                            </div>
-                            <div id="admin-gold-list">
-                                <div class="text-center py-12" style="color:#B8860B;">
-                                    <span style="font-size:3rem;">⭐</span>
-                                    <p class="font-bold mt-3 text-lg">Gold Products yahan dikhenge</p>
-                                    <button onclick="copyGoldSQL()" class="mt-4 text-sm bg-amber-600 text-white px-5 py-2 rounded-xl font-bold hover:bg-amber-700 active:scale-95">📋 SQL Copy karo</button>
+                                <h3 class="font-bold text-lg flex items-center gap-2" style="color:#1d4ed8;">⚡ Electronics Products</h3>
+                                <div class="flex gap-2">
+                                    <button onclick="loadAdminElectronicsProducts()" class="text-xs px-3 py-1.5 rounded-lg font-bold border" style="background:#eff6ff;color:#1d4ed8;border-color:#3b82f6;"><i class="fas fa-sync-alt mr-1"></i>Refresh</button>
+                                    <button onclick="switchAdminTab('inventory')" class="text-xs px-3 py-1.5 rounded-lg font-bold border bg-blue-600 text-white border-blue-600 hover:bg-blue-700"><i class="fas fa-plus mr-1"></i>Add New</button>
                                 </div>
+                            </div>
+                            <div id="admin-electronics-list">
+                                <div class="text-center py-12" style="color:#1d4ed8;">
+                                    <span style="font-size:3rem;">⚡</span>
+                                    <p class="font-bold mt-3 text-lg">Electronics products yahan dikhenge</p>
+                                    <p class="text-sm text-gray-500 mt-1">Refresh karein ya Add Product mein Electronics select karein</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 md:p-6 rounded-xl shadow-md border border-gray-100">
+                            <h3 class="font-bold text-sm mb-3 text-blue-700">⚡ Electronics Categories</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                                <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-center"><div class="text-2xl mb-1">📱</div><div class="font-bold text-blue-700">Mobile Accessories</div></div>
+                                <div class="bg-purple-50 border border-purple-200 rounded-xl p-3 text-center"><div class="text-2xl mb-1">🎧</div><div class="font-bold text-purple-700">Audio Devices</div></div>
+                                <div class="bg-green-50 border border-green-200 rounded-xl p-3 text-center"><div class="text-2xl mb-1">🎮</div><div class="font-bold text-green-700">Gaming</div></div>
+                                <div class="bg-orange-50 border border-orange-200 rounded-xl p-3 text-center"><div class="text-2xl mb-1">⌚</div><div class="font-bold text-orange-700">Smart Gadgets</div></div>
+                                <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 text-center"><div class="text-2xl mb-1">💻</div><div class="font-bold text-gray-700">Computer Accessories</div></div>
+                                <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-3 text-center"><div class="text-2xl mb-1">🏠</div><div class="font-bold text-yellow-700">Home Electronics</div></div>
+                                <div class="bg-rose-50 border border-rose-200 rounded-xl p-3 text-center"><div class="text-2xl mb-1">🎬</div><div class="font-bold text-rose-700">Creator Tools</div></div>
                             </div>
                         </div>
                     </div>
@@ -1212,10 +1342,10 @@
     <!-- BOTTOM NAV -->
     <nav class="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 flex justify-around py-3 z-[60] text-xs font-medium text-gray-500 shadow-[0_-5px_15px_rgba(0,0,0,0.08)]">
         <div class="flex flex-col items-center gap-1 cursor-pointer hover:text-rose-600 transition-colors" onclick="navigate('home')"><i class="fas fa-home text-lg"></i><span>Home</span></div>
-        <div class="flex flex-col items-center gap-1 cursor-pointer hover:text-rose-600 transition-colors" onclick="navigate('shop')"><i class="fas fa-tshirt text-lg"></i><span>Shop</span></div>
-        <div class="flex flex-col items-center gap-1 cursor-pointer transition-colors" id="gold-nav-item" onclick="navigate('gold')" style="color:#B8860B;">
-            <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#1a0800,#3d2c00,#C9A84C);border:2px solid #C9A84C;box-shadow:0 2px 8px rgba(201,168,76,0.5);display:flex;align-items:center;justify-content:center;font-size:13px;">⭐</div>
-            <span style="font-size:10px;font-weight:800;color:#B8860B;">Gold</span>
+        <div class="flex flex-col items-center gap-1 cursor-pointer hover:text-rose-600 transition-colors" id="ok-nav-categories" onclick="(function(){if(typeof window._openCategories==='function'){window._openCategories();}else{var t=setInterval(function(){if(typeof window._openCategories==='function'){clearInterval(t);window._openCategories();}},100);setTimeout(function(){clearInterval(t);},5000);}})()"><i class="fas fa-th-large text-lg"></i><span>Categories</span></div>
+        <div class="flex flex-col items-center gap-1 cursor-pointer transition-colors" id="electronics-nav-item" onclick="(function(){if(typeof window._openCategoriesTo==='function'){window._openCategoriesTo('Electronics');}else{openCategoryPage('Electronics');}})()" style="color:#1d4ed8;">
+            <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#1e3a8a,#1d4ed8,#60a5fa);border:2px solid #3b82f6;box-shadow:0 2px 8px rgba(59,130,246,0.5);display:flex;align-items:center;justify-content:center;font-size:13px;">⚡</div>
+            <span style="font-size:10px;font-weight:800;color:#1d4ed8;">Elec</span>
         </div>
         <div class="flex flex-col items-center gap-1 cursor-pointer hover:text-rose-600 relative transition-colors" onclick="toggleCart()"><i class="fas fa-shopping-bag text-lg"></i><span>Cart</span><span id="mobile-cart-badge" class="absolute -top-1 right-2 bg-rose-500 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center hidden">0</span></div>
         <div class="flex flex-col items-center gap-1 cursor-pointer hover:text-rose-600 transition-colors" onclick="navigate('profile')"><i class="far fa-user text-lg"></i><span id="nav-profile-text">Login</span></div>
@@ -1311,11 +1441,12 @@
         <div class="flex gap-3"><button onclick="installApp()" class="bg-white text-rose-600 px-6 py-2.5 rounded-xl font-bold shadow-lg hover:shadow-xl active:scale-95">Install App</button><button onclick="hideInstallBanner()" class="text-white/80 hover:text-white px-4 py-2.5 rounded-xl font-semibold hover:bg-white/10">Not Now</button></div>
     </div>
 
-    <script src="script-core.js"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="script-core.js"></script>
     <script src="script-admin.js"></script>
     <script src="admin-luxury-anim.js"></script>
     <script src="script-auth-gate.js"></script>
-    <script src="mega-patch.js"></script>
+    <script src="final-system.js"></script>
+    
     
     <script>
         // Supplier URL preview
@@ -1342,15 +1473,4 @@
                     console.log('SW Registered!');
                     setInterval(() => { reg.update(); }, 1000 * 60 * 60);
                 })
-                .catch(err => console.log('SW Error:', err));
-            });
-            navigator.serviceWorker.addEventListener('message', (event) => {
-                if (event.data && event.data.type === 'SW_UPDATED') {
-                    console.log("Naya version mil gaya! Auto-reloading...");
-                    window.location.reload();
-                }
-            });
-        }
-    </script>
-</body>
-</html>
+                .catch(err => console.log('SW Er
